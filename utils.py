@@ -5,6 +5,7 @@ import os
 import glob
 import shutil
 import csv
+import errno
 
 
 def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
@@ -32,6 +33,14 @@ def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: 
     for folder in classification_folders:
         full_path_of_class = os.path.join(path_to_data, folder)
         image_paths = glob.glob(os.path.join(full_path_of_class, "*.png"))
+    # Check whether the path can be found
+    if not os.path.isdir(path_to_train):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path_to_new_train)
+    if not os.path.isdir(path_to_new_train):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path_to_new_train)
+    if not os.path.isdir(path_to_new_val):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path_to_new_val)
+
         # Split the data into train and validate
         train, val = train_test_split(image_paths, test_size=split_size)
 
@@ -52,10 +61,15 @@ def copy_to_folder(files: str, path: str, folder_id: str):
     Return: None
 
     """
-    folder_path = os.path.join(path, folder_id)
-    create_if_not_found(folder_path)
-    for file in files:
-        shutil.copy(file,folder_path)
+    found = os.path.isdir(path)
+    if not create and not found:
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
+    if create and not found:
+        create_if_not_found(path)
+    number_of_files = len(files)
+    for idx,file in enumerate(files):
+        shutil.copy(file,path)
+    print(f"Processed Data: {number_of_files}", end='\r')
 
 def create_if_not_found(path: str):
     """ Recursively create path if not found
