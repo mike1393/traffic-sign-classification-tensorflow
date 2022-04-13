@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 import os
 import glob
 import shutil
+import csv
 
 
 def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
@@ -69,3 +70,60 @@ def create_if_not_found(path: str):
         print(f"{path} not found")
         os.makedirs(path)
         print(f"{path} created!")
+
+def get_csv_row_number(csv_path: str):
+    """ Get the number of data from csv file
+
+    Get the number of data from csv file by reading one row at a time.
+
+    Typical usage example:
+    number_of_data = get_csv_row_number("/data/Test.csv")
+    
+    Args:
+        csv_path: The absolute path to test csv folder
+
+    Raises:
+        EnvironmentError: An error occurs if the csv.reader cannot open the file
+    """
+    try:
+        data_size=0
+        with open(csv_path,'rb') as file_path:
+            reader = csv.reader(file_path)
+            data_size = sum(1 for row in reader)
+    except EnvironmentError:
+        print(f"[Error] Cannot open file {csv_path}")
+    return data_size
+
+def order_test_set(path_to_test: str, path_to_test_csv: str):
+    """ Organizes the testing images into label folders
+
+    Re-organizes the images in test folder into cooresponding label.
+
+    Typical usage example:
+    order_test_set("/data/Test", "/data/Test.csv")
+
+    Args:
+        path_to_test: The absolute path to test folder
+        path_to_test_csv: The absolute path to test csv folder
+    Raises:
+        EnvironmentError: if the csv.reader cannot open the file
+    """
+    image_size = get_csv_row_number(path_to_test_csv)-1
+    print("Start ordering test files to labeled folder...\n")
+    try:
+        with open(path_to_test_csv, 'r') as csv_file:
+            reader = csv.reader(csv_file,delimiter=",")
+            for i,row in enumerate(reader):
+                if i==0:
+                    continue
+                img_name = row[-1][5:]
+                img_label = row[-2]
+                path_to_folder = os.path.join(path_to_test,img_label)
+                create_if_not_found(path_to_folder)
+                path_to_image = os.path.join(path_to_test, img_name)
+                shutil.move(path_to_image,path_to_folder)
+                print(f"Processed Image :[{i}/{image_size}]", end='\r')
+            print()
+    except EnvironmentError:
+        print(f"[Error] Cannot open file {path_to_test_csv}")
+
