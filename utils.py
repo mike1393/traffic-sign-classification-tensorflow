@@ -7,8 +7,7 @@ import shutil
 import csv
 import errno
 
-
-def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
+def train_val_split(path_to_train: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
     """Splits train data for validation
 
     Split the data into training data and validation data.
@@ -24,15 +23,6 @@ def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: 
         FileNotFoundError: An error occurs if the path cannot be found by os
 
     """
-    # Get the full path of each image and store them into a list
-    classification_folders = os.listdir(path_to_data)
-    print(f"{len(classification_folders)} class folder(s) found.")
-    # Create root folders for train, val if they don't exist
-    create_if_not_found(path_to_new_train)
-    create_if_not_found(path_to_new_val)
-    for folder in classification_folders:
-        full_path_of_class = os.path.join(path_to_data, folder)
-        image_paths = glob.glob(os.path.join(full_path_of_class, "*.png"))
     # Check whether the path can be found
     if not os.path.isdir(path_to_train):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path_to_new_train)
@@ -99,9 +89,7 @@ def create_if_not_found(path: str):
     """
     found = os.path.isdir(path)
     if not found:
-        print(f"{path} not found")
         os.makedirs(path)
-        print(f"{path} created!")
 
 def get_csv_row_number(csv_path: str):
     """ Get the number of data from csv file
