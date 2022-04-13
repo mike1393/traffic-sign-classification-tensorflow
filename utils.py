@@ -15,13 +15,13 @@ def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: 
     Two new folders will be created containing new training data and new validation data repectively.
 
     Args:
-        path_to_data(str): The path to training data contains GTSRB
-        path_to_new_train(str): The path to new training data
-        path_to_new_val(str): The path to new validation data
-        split_size(float): The percentage of validation data with repect to old training data. Value between [0,1].
+        path_to_train: The path to training data contains GTSRB
+        path_to_new_train: The path to new training data
+        path_to_new_val: The path to new validation data
+        split_size: The percentage of validation data with repect to old training data. Value between [0,1].
 
-    Return:
-        None
+    Raise:
+        FileNotFoundError: An error occurs if the path cannot be found by os
 
     """
     # Get the full path of each image and store them into a list
@@ -41,24 +41,37 @@ def train_val_split(path_to_data: str, path_to_new_train: str, path_to_new_val: 
     if not os.path.isdir(path_to_new_val):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path_to_new_val)
 
+    classification_folders = os.listdir(path_to_train)
+    number_of_folders = len(classification_folders)
+    print(f"{number_of_folders} class folder(s) found.")
+    for idx, folder in enumerate(classification_folders):
+        path_to_folder = os.path.join(path_to_train, folder)
+        path_to_training_folder = os.path.join(path_to_new_train, folder)
+        path_to_val_folder = os.path.join(path_to_new_val, folder)
+        # Store all files within the folder into a list
+        image_paths = glob.glob(os.path.join(path_to_folder, "*.png"))
         # Split the data into train and validate
-        train, val = train_test_split(image_paths, test_size=split_size)
+        training_data, val_data = train_test_split(image_paths, test_size=split_size)
+        # Copy the list of data to saperate folders
+        print(f"Process folder :[{idx+1}/{number_of_folders}]", end=' ')
+        copy_list_to_folder(training_data, path_to_training_folder, create=True)
+        print(f"Process folder :[{idx+1}/{number_of_folders}]", end=' ')
+        copy_list_to_folder(val_data, path_to_val_folder, create=True)
+    print()
 
-        copy_to_folder(train, path_to_new_train, folder)
-        copy_to_folder(val, path_to_new_val, folder)
 
-def copy_to_folder(files: str, path: str, folder_id: str):
+def copy_list_to_folder(files: list, path: str, create: bool=False):
     """Copies a list of files to target directory
 
-    The path with the class_id will be created if it is not exist
     Each file will be copied to target directory.
 
     Args:
-        files(list(str)): A list of files
-        path(str): The path to root folder
-        class_id(str): The class id
+        files: A list of data path
+        path: The target path
+        create: A flag shows whether the user wants to create the path if not found.
 
-    Return: None
+    Raises:
+        FileNotFoundError: An error occurs if file cannot be found by os
 
     """
     found = os.path.isdir(path)
@@ -72,7 +85,12 @@ def copy_to_folder(files: str, path: str, folder_id: str):
     print(f"Processed Data: {number_of_files}", end='\r')
 
 def create_if_not_found(path: str):
-    """ Recursively create path if not found
+    """ Create target path
+
+    Recursively create target path if path is not found.
+
+    Typical usage example:
+    create_if_not_found("/foo")
 
     Args:
         path: the path to be found
