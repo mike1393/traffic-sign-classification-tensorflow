@@ -1,6 +1,7 @@
 #Third Party
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
 # Built-in
 import os
 import glob
@@ -155,7 +156,7 @@ def order_test_set(path_to_test: str, path_to_test_csv: str):
 
 def create_generators(
     batch_size: int, path_to_train: str, path_to_val: str, 
-    path_to_test: str, class_mode: str='categorical'):
+    path_to_test: str, target_size=(40,40), class_mode: str='categorical'):
     """ Create image generator for training, validation, and testing data
 
     An ImageDataGenerator was created with a re-scaling factor of 1/255.
@@ -166,34 +167,49 @@ def create_generators(
         path_to_train: Full path to the training data folder
         path_to_val: Full path to the validation data folder
         path_to_test: Full path to the testing data folder
+        target_size: Resize the image to target size
         class_mode: The encoded mode for generator, 
                     make sure to match the loss type during model compilation.
     Return:
         A tuple of (training_generator, validation_generator, testing_generator).
     """
-    preprocessor = ImageDataGenerator(rescale=1/255.)
-    train_generator = preprocessor.flow_from_directory(
+    training_preprocessor = ImageDataGenerator(rescale=1/255., rotation_range=10, width_shift_range=0.1)
+    test_preprocessor = ImageDataGenerator(rescale=1/255.)
+    train_generator = training_preprocessor.flow_from_directory(
         directory=path_to_train,
-        target_size=(60,60),
+        target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
         batch_size=batch_size,
         shuffle=True)
 
-    val_generator = preprocessor.flow_from_directory(
+    val_generator = test_preprocessor.flow_from_directory(
         directory=path_to_val,
-        target_size=(60,60),
+        target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
         batch_size=batch_size,
         shuffle=False)
 
-    test_generator = preprocessor.flow_from_directory(
+    test_generator = test_preprocessor.flow_from_directory(
         directory=path_to_test,
-        target_size=(60,60),
+        target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
         batch_size=batch_size,
         shuffle=False)
 
     return train_generator, val_generator, test_generator
+
+def display_performance(number_of_nets: int, epochs: int, history, names: list, line_styles: list, ylim=[0.95,1]):
+    # PLOT ACCURACIES
+    plt.figure(figsize=(epochs+2,5))
+    for i in range(number_of_nets):
+        plt.plot(history[i].history['val_accuracy'],linestyle=line_styles[i])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(names, loc='upper left')
+    axes = plt.gca()
+    axes.set_ylim(ylim)
+    plt.show()
