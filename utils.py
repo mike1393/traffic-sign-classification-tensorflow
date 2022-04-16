@@ -94,7 +94,7 @@ def create_if_not_found(path: str):
     if not found:
         os.makedirs(path)
 
-def get_csv_row_number(csv_path: str):
+def get_csv_row_number(csv_path: str)->int:
     """ Get the number of data from csv file
 
     Get the number of data from csv file by reading one row at a time.
@@ -104,6 +104,9 @@ def get_csv_row_number(csv_path: str):
     
     Args:
         csv_path: The absolute path to test csv folder
+
+    Return:
+        The number of data in the csv file
 
     Raises:
         EnvironmentError: An error occurs if the csv.reader cannot open the file
