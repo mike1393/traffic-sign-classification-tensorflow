@@ -1,11 +1,14 @@
 #Third Party
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # Built-in
 import os
 import glob
 import shutil
 import csv
 import errno
+from collections.abc import Sequence
+
 
 def train_val_split(path_to_train: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
     """Splits train data for validation
@@ -147,3 +150,46 @@ def order_test_set(path_to_test: str, path_to_test_csv: str):
     except EnvironmentError:
         print(f"[Error] Cannot open file {path_to_test_csv}")
 
+def create_generators(
+    batch_size: int, path_to_train: str, path_to_val: str, path_to_test: str,
+    rescale_factor: float=1/255., class_mode: str='categorical'
+)->Sequence[ImageDataGenerator]:
+    """ Create image generator for training, validation, and testing data
+
+    An ImageDataGenerator was created with a re-scaling factor of 1/255.
+    Then the generator for each data path will be returned.
+
+    Args:
+        batch_size: The batch size for generator
+        path_to_train: Full path to the training data folder
+        path_to_val: Full path to the validation data folder
+        path_to_test: Full path to the testing data folder
+    Return:
+        A tuple of (training_generator, validation_generator, testing_generator).
+    """
+    preprocessor = ImageDataGenerator(rescale=rescale_factor)
+    train_generator = preprocessor.flow_from_directory(
+        directory=path_to_train,
+        target_size=(60,60),
+        color_mode='rgb',
+        class_mode=class_mode,
+        batch_size=batch_size,
+        shuffle=True)
+
+    val_generator = preprocessor.flow_from_directory(
+        directory=path_to_val,
+        target_size=(60,60),
+        color_mode='rgb',
+        class_mode=class_mode,
+        batch_size=batch_size,
+        shuffle=False)
+
+    test_generator = preprocessor.flow_from_directory(
+        directory=path_to_test,
+        target_size=(60,60),
+        color_mode='rgb',
+        class_mode=class_mode,
+        batch_size=batch_size,
+        shuffle=False)
+
+    return train_generator, val_generator, test_generator
