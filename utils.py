@@ -7,7 +7,7 @@ import glob
 import shutil
 import csv
 import errno
-from collections.abc import Sequence
+# from collections.abc import Sequence
 
 
 def train_val_split(path_to_train: str, path_to_new_train: str, path_to_new_val: str, split_size: float=0.1):
@@ -154,9 +154,8 @@ def order_test_set(path_to_test: str, path_to_test_csv: str):
         print(f"[Error] Cannot open file {path_to_test_csv}")
 
 def create_generators(
-    batch_size: int, path_to_train: str, path_to_val: str, path_to_test: str,
-    rescale_factor: float=1/255., class_mode: str='categorical'
-)->Sequence[ImageDataGenerator]:
+    batch_size: int, path_to_train: str, path_to_val: str, 
+    path_to_test: str, class_mode: str='categorical'):
     """ Create image generator for training, validation, and testing data
 
     An ImageDataGenerator was created with a re-scaling factor of 1/255.
@@ -167,10 +166,12 @@ def create_generators(
         path_to_train: Full path to the training data folder
         path_to_val: Full path to the validation data folder
         path_to_test: Full path to the testing data folder
+        class_mode: The encoded mode for generator, 
+                    make sure to match the loss type during model compilation.
     Return:
         A tuple of (training_generator, validation_generator, testing_generator).
     """
-    preprocessor = ImageDataGenerator(rescale=rescale_factor)
+    preprocessor = ImageDataGenerator(rescale=1/255.)
     train_generator = preprocessor.flow_from_directory(
         directory=path_to_train,
         target_size=(60,60),
