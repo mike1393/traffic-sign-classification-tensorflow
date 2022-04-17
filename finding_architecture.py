@@ -5,7 +5,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 import os
 #local
 from utils import create_generators, display_performance
-from models import compare_conv_blocks
+from models import compare_case, TEST_CASES
+
 
 if __name__ == "__main__":
     # Create Generators
@@ -14,11 +15,11 @@ if __name__ == "__main__":
     path_to_val = os.path.join(os.path.join(path_to_data,"training_data"), "val")
     path_to_test = os.path.join(path_to_data, "Test")
     batch_size = 64
-    epochs = 15
+    epochs = 2
     img_size = (40,40)
     train_generator, val_generator, test_generator = create_generators(
         batch_size,path_to_train,path_to_val,path_to_test,img_size)
-
+    number_of_classes = train_generator.num_classes
     # Create callback functions to run during training
     callback_list=[]
 
@@ -26,15 +27,34 @@ if __name__ == "__main__":
     early_stop = EarlyStopping(monitor="val_accuracy", patience=4)
     callback_list.append(early_stop)
 
-    # Create, Compile, and fit the model
-    number_of_models = 3
+
+
+    # Parameters to updata after each test cases
+    settings = {
+    "number_of_classes":number_of_classes,
+    "conv_block_number":3,
+    "conv_base_filter":32,
+    "dense_size":128,
+    "dropout_rate":.0,
+    "batch_norm":False,
+    "double_layer": False}
+    names = ["0%","10%","20%","30%","40%","50%","60%"]
+
+    # Establish Test Cases
+    case = 2
+    cases = ["convolution_blocks", "convolution_filter", "dropout", "Advanced"]
+    titles = ["Block Number", "Filter Number", "Dropout Percentage", "Advanced Layer"]
+    test_case, number_of_models = TEST_CASES[cases[case]]
     history=[0]*number_of_models
-    names = ["[C-P]","2[C-P]","3[C-P]"]
-    number_of_classes = train_generator.num_classes
-    line_styles = ['-','--',':','-.']
+    print("=================")
+    print(f"Number of Models: {number_of_models}")
+    print(f"Number of Epochs per model: {epochs}")
+    print(f"Test case: {titles[case]} GO!")
+    print("=================")
     for i in range(number_of_models):
-        model = compare_conv_blocks(number_of_classes,number_of_blocks=i+1)
+        model = compare_case(test_case, i, settings)
         model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+        # Model Training
         with device("/device:GPU:0"):
             history[i] = model.fit(
                 train_generator, 
@@ -44,4 +64,14 @@ if __name__ == "__main__":
                 callbacks=callback_list,
                 verbose=2)
             print(f"CNN {names[i]}: Epochs={epochs}, Train accuracy={max(history[i].history['accuracy'])},Validation accuracy={max(history[i].history['val_accuracy'])}")
-    display_performance(number_of_models, epochs, history, names, line_styles, ylim=[0.95,1])
+    print("=================")
+    print(f"Test case: {titles[case]} Done!")
+    print("=================")
+    # Plot Result
+    display_performance(
+        fig_title=titles[case],
+        number_of_nets=number_of_models, 
+        epochs=epochs, 
+        history=history, 
+        names=names, 
+        ylim=[0.9,1])
