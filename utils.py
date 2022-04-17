@@ -201,12 +201,13 @@ def create_generators(
 
     return train_generator, val_generator, test_generator
 
-def display_performance(number_of_nets: int, epochs: int, history, names: list, line_styles: list, ylim=[0.95,1]):
+def display_performance(fig_title, number_of_nets: int, epochs: int, history, names: list, ylim=[0.95,1]):
     # PLOT ACCURACIES
     plt.figure(figsize=(epochs+2,5))
     for i in range(number_of_nets):
-        plt.plot(history[i].history['val_accuracy'],linestyle=line_styles[i])
-    plt.title('model accuracy')
+        plt.plot(history[i].history['val_accuracy'],linestyle='-')
+    title = f"{fig_title}\n" + "Model Accuracy Compare"
+    plt.title(title)
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(names, loc='upper left')
