@@ -5,8 +5,15 @@ from tensorflow.keras.callbacks import EarlyStopping
 import os
 #local
 from utils import create_generators, display_performance
-from models import compare_case, TEST_CASES
+from models import compare_case
 
+TEST_CASES = {
+    "convolution_blocks":("Convolution Blocks",3),
+    "convolution_filter":("Convolution Filter",3),
+    "conv_dropout":("Convolution Dropout",2),
+    "double_layer":("Double Convolution Layer",2),
+    "batch_norm":("Batch Normalization",2),
+    "advanced":("Advanced",3)}
 
 if __name__ == "__main__":
     # Create Generators
@@ -15,7 +22,7 @@ if __name__ == "__main__":
     path_to_val = os.path.join(os.path.join(path_to_data,"training_data"), "val")
     path_to_test = os.path.join(path_to_data, "Test")
     batch_size = 64
-    epochs = 2
+    epochs = 15
     img_size = (40,40)
     train_generator, val_generator, test_generator = create_generators(
         batch_size,path_to_train,path_to_val,path_to_test,img_size)
@@ -24,32 +31,36 @@ if __name__ == "__main__":
     callback_list=[]
 
     # Create callback func to prevent unnecessary trainings
-    early_stop = EarlyStopping(monitor="val_accuracy", patience=4)
+    early_stop = EarlyStopping(monitor="val_accuracy", patience=10)
     callback_list.append(early_stop)
 
 
 
     # Parameters to updata after each test cases
     settings = {
-    "number_of_classes":number_of_classes,
+    "number_of_classes":43,
     "conv_block_number":3,
     "conv_base_filter":32,
     "dense_size":128,
-    "dropout_rate":.0,
+    "dropout_rate":.1,
     "batch_norm":False,
-    "double_layer": False}
-    names = ["0%","10%","20%","30%","40%","50%","60%"]
+    "double_layer": True}
+    names = ["[32C3-32C3-P2]","[32C3-BN-32C3-BN-P2-BN]","[32C3-BN-DP-32C3-BN-DP-P2-BN]"]
 
     # Establish Test Cases
-    case = 2
-    cases = ["convolution_blocks", "convolution_filter", "dropout", "Advanced"]
-    titles = ["Block Number", "Filter Number", "Dropout Percentage", "Advanced Layer"]
+    case = 5
+    cases = [
+        "convolution_blocks", "convolution_filter", 
+        "conv_dropout", "double_layer","batch_norm","advanced"]
+    titles = [
+        "Block Number", "Filter Number", "Dropout after Conv Layer", 
+        "Double Convolution Layer", "Batch Normalization","Batch Normalization with Dropout Layer"]
     test_case, number_of_models = TEST_CASES[cases[case]]
     history=[0]*number_of_models
-    print("=================")
+    print(f"======{titles[case]}=======")
     print(f"Number of Models: {number_of_models}")
     print(f"Number of Epochs per model: {epochs}")
-    print(f"Test case: {titles[case]} GO!")
+    print(f"Test case: {names} GO!")
     print("=================")
     for i in range(number_of_models):
         model = compare_case(test_case, i, settings)
@@ -74,4 +85,4 @@ if __name__ == "__main__":
         epochs=epochs, 
         history=history, 
         names=names, 
-        ylim=[0.9,1])
+        ylim=[0.90,1])
