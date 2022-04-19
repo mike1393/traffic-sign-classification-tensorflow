@@ -1,4 +1,5 @@
 #Third Party
+from cProfile import label
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
@@ -213,4 +214,28 @@ def display_performance(fig_title, number_of_nets: int, epochs: int, history, na
     plt.legend(names, loc='upper left')
     axes = plt.gca()
     axes.set_ylim(ylim)
+    plt.show()
+
+def display_history(history, epochs: int):
+    # PLOT ACCURACIES
+    names = ['accuracy', 'val_accuracy', 'loss', 'val_loss']
+    fig = plt.figure(figsize=(epochs+2,5))
+    fig.suptitle("Fitting Result")
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    for i,name in enumerate(names[:]):
+        if i<2:
+            ax1.plot(history.history[name],linestyle='-',label=name)
+        else:
+            ax2.plot(history.history[name],linestyle='-', label=name)
+    ax1.set_ylabel("accuracy")
+    ax1.set_ylim([0.98,1])
+    ax1.set_xlabel("epoch")
+    ax2.set_ylim([0.0,0.1])
+    ax2.set_ylabel("loss")
+    ax2.set_xlabel("epoch")
+
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper left')
+    plt.subplots_adjust(hspace=0.35)
     plt.show()
