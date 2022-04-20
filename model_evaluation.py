@@ -17,7 +17,7 @@ if __name__ == "__main__":
     epochs = 15
     train_generator, val_generator, test_generator = create_generators(batch_size,path_to_train,path_to_val,path_to_test)
     
-    # Test Model
+    # Load Pre-trained Model
     path_to_save_model = os.path.join(os.getcwd(), "saved_model")
     test_model = load_model(path_to_save_model)
     test_model.summary()
@@ -25,13 +25,12 @@ if __name__ == "__main__":
     print("Evaluating Validation Set:")
     test_model.evaluate(val_generator)
 
+    # Evaluate model with unseen dataset
     print("Evaluating Test Set")
     test_model.evaluate(test_generator)
-
-    # Evaluate model
     y_label, y_pred = get_predict_from_generator(test_model, val_generator)
     # Show confusion matrix
-    # show_confusion_matrix(y_label, y_pred)
+    show_confusion_matrix(y_label, y_pred)
     # Show classification report
     show_classification_report(y_label, y_pred)
 
