@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # callback_list.append(checkpoint_saver)
 
     # Create callback func to prevent unnecessary trainings
-    early_stop = EarlyStopping(monitor="val_accuracy", patience=10)
+    early_stop = EarlyStopping(monitor="val_accuracy", patience=5)
     callback_list.append(early_stop)
 
     #Create callback func for LearningRateScheduler
