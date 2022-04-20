@@ -1,8 +1,13 @@
 #Third Party
 from cProfile import label
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
+import tensorflow as tf
+import seaborn as sns
+import pandas as pd
+import numpy as np
 # Built-in
 import os
 import glob
@@ -189,7 +194,7 @@ def create_generators(
         target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
-        batch_size=batch_size,
+        batch_size=1,
         shuffle=False)
 
     test_generator = test_preprocessor.flow_from_directory(
@@ -197,7 +202,7 @@ def create_generators(
         target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
-        batch_size=batch_size,
+        batch_size=1,
         shuffle=False)
 
     return train_generator, val_generator, test_generator
@@ -217,6 +222,7 @@ def display_performance(fig_title, number_of_nets: int, epochs: int, history, na
     plt.show()
 
 def display_history(history, epochs: int):
+
     # PLOT ACCURACIES
     names = ['accuracy', 'val_accuracy', 'loss', 'val_loss']
     fig = plt.figure(figsize=(epochs+2,5))
@@ -239,3 +245,54 @@ def display_history(history, epochs: int):
     ax2.legend(loc='upper left')
     plt.subplots_adjust(hspace=0.35)
     plt.show()
+
+
+def show_confusion_matrix(y_true, y_pred):
+    
+    confusion_mtx = tf.math.confusion_matrix(y_true, y_pred)
+    fig = plt.figure(figsize=(20, 20))
+    # fig.suptitle("Confusion Matrix")
+    ax = fig.add_subplot(111)
+    ax.set_title("Confusion Matrix")
+    sns.heatmap(confusion_mtx,
+                annot=True, fmt='g',ax=ax, xticklabels=1, yticklabels=1)
+    ylabel = [str(i) for i in range(43)]
+    ax.set_yticklabels(ylabel, rotation =0)
+    plt.xlabel('Prediction')
+    plt.ylabel('Label')
+    plt.show()
+
+def show_classification_report(y_true, y_pred):
+    print(classification_report(y_true, y_pred))
+    fig = plt.figure(figsize=(6, 70))
+    # fig.suptitle("Classification Report")
+    ax = fig.add_subplot(111)
+    ax.set_title("Classification Report")
+    clf_report = classification_report(y_true,
+                                   y_pred,
+                                   output_dict=True)
+    sns.heatmap(pd.DataFrame(clf_report).iloc[:-1, :].T, 
+                annot=True, xticklabels=1, yticklabels=1, ax=ax)
+
+    ylabel = ['class'+str(i) for i in range(43)]
+    ylabel+=['Accuracy', 'Macro Avg', 'Weighted Avg']
+    ax.set_yticklabels(ylabel, rotation =0)
+    
+    plt.show()
+
+def get_predict_from_generator(model, test_generator):
+    labels = np.array([])
+    imgs = np.array([])
+    data_length = len(test_generator)
+    for i in range(data_length):
+        img, label = next(test_generator)
+        if i==0:
+            imgs = np.array(img)
+            labels = np.array(label)
+        else:
+            imgs = np.vstack((imgs, img))
+            labels = np.vstack((labels, label))
+        print(f"[{i+1}/{data_length}]", end='\r')
+    y_pred = np.argmax(model.predict(imgs,verbose=1), axis=1)
+    y_label = np.argmax(labels, axis=1)
+    return (y_label, y_pred)

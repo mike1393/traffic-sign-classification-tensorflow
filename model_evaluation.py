@@ -1,9 +1,11 @@
 #Third-party
 from tensorflow.keras.models import load_model
+import numpy as np
 #built-in
 import os
 #local
-from utils import create_generators
+from utils import create_generators, show_confusion_matrix, show_classification_report, get_predict_from_generator
+
 
 if __name__ == "__main__":
     # Create Generators
@@ -25,3 +27,14 @@ if __name__ == "__main__":
 
     print("Evaluating Test Set")
     test_model.evaluate(test_generator)
+
+    # Evaluate model
+    y_label, y_pred = get_predict_from_generator(test_model, val_generator)
+    # Show confusion matrix
+    # show_confusion_matrix(y_label, y_pred)
+    # Show classification report
+    show_classification_report(y_label, y_pred)
+
+
+
+    
