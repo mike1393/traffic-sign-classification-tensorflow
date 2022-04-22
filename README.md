@@ -1,4 +1,4 @@
-# Traffic Sign Classification with Tensorflow (98% accuracy)
+# Traffic Sign Classification with Tensorflow (98.5% accuracy)
 ## :bulb: Project Scope
 1. Learn [how to do](https://github.com/mike1393/traffic-sign-classification-tensorflow#mag_right-finding-architecture) a multi-class single-image classification.
 2. [Trained](https://github.com/mike1393/traffic-sign-classification-tensorflow#speech_balloon-model-fitting) a neural network to classify German traffic signs.
