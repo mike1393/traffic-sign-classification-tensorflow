@@ -13,14 +13,9 @@ In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](
 - Things different than MNIST
     1. Images comes in different folders, one class per folder in terms of training folder
     2. Images come in different sizes.
-
-## Data Preprocessing
-
-- Folder Cleaning
-I split the original training data into a new training data folder and a new validation data folder. In these folders, each image was placed into their correspondence class folder. The testing folder was handled in a similar fashion except for the data splitting.
-
-- Image Data Generator
-I used the TensorFlow image data generator to rescale and augment the dataset.
+- Data Preprocessing
+    1. Folder Cleaning: I split the original training data into a new training data folder and a new validation data folder. In these folders, each image was placed into their correspondence class folder. The testing folder was handled in a similar fashion except for the data splitting.
+    2. Image Data Generator: I used the TensorFlow image data generator to rescale and augment the dataset.
 
 ## Finding Architecture
 Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by [Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) work. Please make sure to check it out if you are interested. Similar to his work, I use the following annotation for model layers.
@@ -37,3 +32,12 @@ The base case for our model can be denoted as the following:
 ```Input → [ 32C5 → P ] → GP → 128D → 43D(softmax)```
 
 To keep the experiment simple, the following strategies were to find the optimal architecture for the feature extraction layers. i.e.layers between Input and GP.
+### How many convolution subsampling blocks?
+I started off by comparing different numbers of convolution blocks. (Since I set my input size to be (40,40) we cannot do four convolution blocks )
+```
+1. [ 32C5 - P ]
+2. [ 32C5 - P ] → [ 64C5 - P ]
+3. [ 32C5 - P ] → [ 64C5 - P ] → [ 128C5 - P ]
+```
+The result of the comparison can be found below. Since the third case outperforms the rest of the two cases, we now make our architecture: Input → [32C5-P] →[64C5-P]→[128C5-P] → GP→128D→43D(softmax)
+![blocks compare](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_block.png)
