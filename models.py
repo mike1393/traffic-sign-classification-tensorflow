@@ -1,5 +1,5 @@
 import tensorflow
-from tensorflow.keras.layers import Input, Conv2D, MaxPool2D, BatchNormalization, Flatten, GlobalAvgPool2D, Dense, Dropout
+from tensorflow.keras.layers import Input, Conv2D, MaxPool2D, BatchNormalization, Flatten, GlobalAvgPool2D, Dense, Dropout, Activation
 from tensorflow.keras.models import Model
 
 
@@ -29,7 +29,7 @@ def best_model(settings: dict):
         double_layer=settings["double_layer"])
 
 def compare_models(
-    number_of_classes: int, input_shape=(40,40,3), 
+    number_of_classes: int, input_shape=(50,50,3), 
     conv_block_number: int=1, conv_base_filter: int=32,
     dense_size: int=128, dropout_rate: float=.0, 
     batch_norm: bool= False, double_layer: bool=False):
@@ -58,12 +58,14 @@ def convolution_block(
     """Convolution Block
     """
     kernal_size = 3 if double_layer else kernal_size
-    x = Conv2D(number_of_filter,kernel_size=kernal_size,activation='relu')(input)
+    x = Conv2D(number_of_filter,kernel_size=kernal_size)(input)
     x = BatchNormalization()(x) if batch_norm else x
+    x = Activation('relu')(x)
     x = Dropout(rate=dropout_rate)(x) if dropout_rate > .0 else x
     if double_layer:
-        x = Conv2D(number_of_filter,kernel_size=kernal_size,activation='relu')(x)
+        x = Conv2D(number_of_filter,kernel_size=kernal_size)(x)
         x = BatchNormalization()(x) if batch_norm else x
+        x = Activation('relu')(x)
         x = Dropout(rate=dropout_rate)(x) if dropout_rate > .0 else x
     x = MaxPool2D()(x)
     x = BatchNormalization()(x) if batch_norm else x
@@ -106,7 +108,7 @@ def compare_case(test_case: str, idx: int, settings: dict):
             conv_block_number=settings["conv_block_number"],
             conv_base_filter=settings["conv_base_filter"],
             dense_size=settings["dense_size"],
-            dropout_rate=.0,
+            dropout_rate=settings["dropout_rate"],
             batch_norm=settings["batch_norm"],
             double_layer=idx)
     elif test_case == "Batch Normalization":
@@ -164,11 +166,11 @@ if __name__=="__main__":
     "conv_block_number":3,
     "conv_base_filter":32,
     "dense_size":128,
-    "dropout_rate":.1,
+    "dropout_rate":0.1,
     "batch_norm":True,
     "double_layer": True}
 
-    # Establish Test Cases
+    # # Establish Test Cases
     # cases = [
     #     "convolution_blocks", "convolution_filter", 
     #     "conv_dropout", "double_layer","batch_norm","advanced"]
