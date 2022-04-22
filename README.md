@@ -18,7 +18,7 @@ In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](
     2. Image Data Generator: I used the TensorFlow image data generator to rescale and augment the dataset.
 
 ## :mag_right: Finding Architecture
-Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by :fire:[Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) :fire:work. Please make sure to check it out if you are interested :thumbsup:. The detail script can be found in [./model.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/models.py) Similar to his work, I use the following annotation for model layers.
+Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by :fire:[Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) :fire:work. Please make sure to check it out if you are interested :thumbsup:. The detail script can be found in [./finding_architecture.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/finding_architecture.py) and [./model.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/models.py). Similar to his work, I use the following annotation for model layers.
 
 - Convolution layer: 32C5 denotes Conv2D(filter=32, kernel_size=5, activation=’relu’).
 - Max Pooling Layer:  P denotes MaxPool2D().
@@ -33,7 +33,7 @@ The base case for our model can be denoted as the following:
 
 To keep the experiment simple, the following strategies were to find the optimal architecture for the feature extraction layers. i.e.layers between Input and GP.
 ### :thought_balloon: How many convolution subsampling blocks?
-I started off by comparing different numbers of convolution blocks. (Since I set my input size to be (40,40) we cannot do four convolution blocks )
+I started off by comparing different numbers of convolution blocks. (Since I set my input size to be (50,50) we cannot do four convolution blocks )
 ```
 1. [ 32C5 - P ]
 2. [ 32C5 - P ] → [ 64C5 - P ]
