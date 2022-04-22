@@ -1,10 +1,10 @@
 # Traffic Sign Classification with Tensorflow (98% accuracy)
-## Project Scope
-1. Learn how to do a multi-class single-image classification.
-2. Trained a neural network to classify German traffic signs.
-3. Evaluate the model.
+## :bulb: Project Scope
+1. Learn [how to do](https://github.com/mike1393/traffic-sign-classification-tensorflow#finding-architecture) a multi-class single-image classification.
+2. [Trained](https://github.com/mike1393/traffic-sign-classification-tensorflow#model-fitting) a neural network to classify German traffic signs.
+3. [Evaluate](https://github.com/mike1393/traffic-sign-classification-tensorflow#model-evaluation) the model.
 
-## Dataset
+## :open_file_folder: Dataset
 In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign)
 - About the dataset:
     - More than 40 classes
@@ -17,8 +17,8 @@ In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](
     1. Folder Cleaning: I split the original training data into a new training data folder and a new validation data folder. In these folders, each image was placed into their correspondence class folder. The testing folder was handled in a similar fashion except for the data splitting.
     2. Image Data Generator: I used the TensorFlow image data generator to rescale and augment the dataset.
 
-## Finding Architecture
-Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by [Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) work. Please make sure to check it out if you are interested. Similar to his work, I use the following annotation for model layers.
+## :mag_right: Finding Architecture
+Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by :fire:[Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) :fire:work. Please make sure to check it out if you are interested:thumbsup:. Similar to his work, I use the following annotation for model layers.
 
 - Convolution layer: 32C5 denotes Conv2D(filter=32, kernel_size=5, activation=’relu’).
 - Max Pooling Layer:  P denotes MaxPool2D().
@@ -32,7 +32,7 @@ The base case for our model can be denoted as the following:
 ```Input → [ 32C5 → P ] → GP → 128D → 43D(softmax)```
 
 To keep the experiment simple, the following strategies were to find the optimal architecture for the feature extraction layers. i.e.layers between Input and GP.
-### How many convolution subsampling blocks?
+### :thought_balloon: How many convolution subsampling blocks?
 I started off by comparing different numbers of convolution blocks. (Since I set my input size to be (40,40) we cannot do four convolution blocks )
 ```
 1. [ 32C5 - P ]
@@ -41,7 +41,7 @@ I started off by comparing different numbers of convolution blocks. (Since I set
 ```
 The result of the comparison can be found below. Since the third case outperforms the rest of the two cases, we now make our architecture: Input → [32C5-P] →[64C5-P]→[128C5-P] → GP→128D→43D(softmax)
 ![blocks compare](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_block.png)
-### How many filters
+### :thought_balloon: How many filters?
 Now that we know the number of our convolution blocks, we now compare the number of filters. Here are the three cases I’ve tested:
 ```
 1. [ 8C5 - P ] → [ 16C5 - P ] → [ 32C5 - P ]
@@ -50,7 +50,7 @@ Now that we know the number of our convolution blocks, we now compare the number
 ```
 The result below shows that case three stands out from the test cases. Hence, the architecture is now: Input → [32C5-P] →[64C5-P]→[128C5-P] → GP→128D→43D(softmax)
 ![filter compare](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_filter.png)
-### Refinement
+### :thought_balloon: Refinement
 After deciding the filter number, the architecture is pretty much done. However, I would like to increase the performance by adding some extra layers.
 - Replacing one convolution layer with two consecutive convolution layers<br>
     The first adjustment is to replace one convolution layer with two consecutive convolution layers to increase non-linearity.([[paper](https://arxiv.org/pdf/1409.1556.pdf)], [[post](https://stackoverflow.com/a/51815101)])
@@ -71,11 +71,10 @@ After deciding the filter number, the architecture is pretty much done. However,
     From the result below, we see that the third case performs slightly better than the other two. Hence, until this step, we have decided on our model architecture.
     ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_BN_Dp.png)
 
-## Model Evaluation
-### Model fitting
+## :speech_balloon: Model fitting
 The following chart is the training result of our model. I used Adam as my optimizer with epsilon=1e-4(suggested by [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/Adam#args)). I also used a stepped learning rate(lr=0.0001 if epoch > 6 else 0.001) with a learning rate scheduler instead of a constant learning rate(lr=0.001), since I observed oscillation in loss value after the 6th epoch.
 ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/fitting_result.png)
-### Model evaluation
+## :speech_balloon: Model evaluation
 
 After model fitting, I evaluate the model with test data, which results in **98% accuracy**.
 
