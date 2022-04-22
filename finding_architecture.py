@@ -1,6 +1,7 @@
 #Third-party
 from tensorflow import device
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler
 #built-in
 import os
 #local
@@ -14,6 +15,11 @@ TEST_CASES = {
     "double_layer":("Double Convolution Layer",2),
     "batch_norm":("Batch Normalization",2),
     "advanced":("Advanced",3)}
+
+def step_scheduler(epoch, lr):
+    if epoch > 6:
+        lr = 1e-4
+    return lr
 
 if __name__ == "__main__":
     # Create Generators
@@ -33,7 +39,9 @@ if __name__ == "__main__":
     # Create callback func to prevent unnecessary trainings
     early_stop = EarlyStopping(monitor="val_accuracy", patience=10)
     callback_list.append(early_stop)
-
+    #Create callback func for LearningRateScheduler
+    lr_scheduler = LearningRateScheduler(step_scheduler)
+    callback_list.append(lr_scheduler)
 
 
     # Parameters to updata after each test cases
@@ -45,7 +53,7 @@ if __name__ == "__main__":
     "dropout_rate":.1,
     "batch_norm":False,
     "double_layer": True}
-    names = ["[32C3-32C3-P2]","[32C3-BN-32C3-BN-P2-BN]","[32C3-BN-DP-32C3-BN-DP-P2-BN]"]
+    names = ["[32C3-32C3-P]","[32C3-BN-32C3-BN-P-BN]", "[32C3-BN-DP-32C3-BN-DP-P-BN]"]
 
     # Establish Test Cases
     case = 5
@@ -64,7 +72,8 @@ if __name__ == "__main__":
     print("=================")
     for i in range(number_of_models):
         model = compare_case(test_case, i, settings)
-        model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+        opt = Adam(epsilon=1e-7)
+        model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
         # Model Training
         with device("/device:GPU:0"):
             history[i] = model.fit(
@@ -85,4 +94,4 @@ if __name__ == "__main__":
         epochs=epochs, 
         history=history, 
         names=names, 
-        ylim=[0.90,1])
+        ylim=[0.97,1])
