@@ -77,8 +77,10 @@ The following chart is the training result of our model. I used Adam as my optim
 ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/fitting_result.png)
 ### Model evaluation
 
-After model fitting, I evaluate the model with test data, which results with **98% accuracy**.
+After model fitting, I evaluate the model with test data, which results in **98% accuracy**.
 
-Now let’s dig deeper and see what this model is BAD at. Below is the confusion matrix and the classification report on test data. We see that the model performs poorly in class 14 and class 20. Where it confuses class 14 with class 4 and class 20 with class 10.
-![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/confusion_matrix.png)
+Now let’s dig deeper and see what this model is BAD at. Below is the confusion matrix and the classification report on test data.
 ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/classification_report.png)
+We see that the model performs poorly in class 14 and class 20, where it confuses class 14 with class 4 and class 20 with class 10.
+![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/confusion_matrix.png)
+
