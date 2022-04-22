@@ -1,8 +1,8 @@
 # Traffic Sign Classification with Tensorflow (98% accuracy)
 ## :bulb: Project Scope
-1. Learn [how to do](https://github.com/mike1393/traffic-sign-classification-tensorflow#finding-architecture) a multi-class single-image classification.
-2. [Trained](https://github.com/mike1393/traffic-sign-classification-tensorflow#model-fitting) a neural network to classify German traffic signs.
-3. [Evaluate](https://github.com/mike1393/traffic-sign-classification-tensorflow#model-evaluation) the model.
+1. Learn [how to do](https://github.com/mike1393/traffic-sign-classification-tensorflow#mag_right-finding-architecture) a multi-class single-image classification.
+2. [Trained](https://github.com/mike1393/traffic-sign-classification-tensorflow#speech_balloon-model-fitting) a neural network to classify German traffic signs.
+3. [Evaluate](https://github.com/mike1393/traffic-sign-classification-tensorflow#speech_balloon-model-evaluation) the model.
 
 ## :open_file_folder: Dataset
 In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign)
