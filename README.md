@@ -18,7 +18,7 @@ In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](
     2. Image Data Generator: I used the TensorFlow image data generator to rescale and augment the dataset.
 
 ## :mag_right: Finding Architecture
-Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by :fire:[Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) :fire:work. Please make sure to check it out if you are interested:thumbsup:. Similar to his work, I use the following annotation for model layers.
+Before we start finding the architecture, let's take a look at the base case first. The following strategy is inspired heavily by :fire:[Christ Deotte’s](https://www.kaggle.com/code/cdeotte/how-to-choose-cnn-architecture-mnist/notebook) :fire:work. Please make sure to check it out if you are interested :thumbsup:. The detail script can be found in [./model.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/models.py) Similar to his work, I use the following annotation for model layers.
 
 - Convolution layer: 32C5 denotes Conv2D(filter=32, kernel_size=5, activation=’relu’).
 - Max Pooling Layer:  P denotes MaxPool2D().
@@ -72,11 +72,11 @@ After deciding the filter number, the architecture is pretty much done. However,
     ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_BN_Dp.png)
 
 ## :speech_balloon: Model fitting
-The following chart is the training result of our model. I used Adam as my optimizer with epsilon=1e-4(suggested by [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/Adam#args)). I also used a stepped learning rate(lr=0.0001 if epoch > 6 else 0.001) with a learning rate scheduler instead of a constant learning rate(lr=0.001), since I observed oscillation in loss value after the 6th epoch.
+The following chart is the training result of our model. I used Adam as my optimizer with epsilon=1e-4(suggested by [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/Adam#args)). I also used a stepped learning rate(lr=0.0001 if epoch > 6 else 0.001) with a learning rate scheduler instead of a constant learning rate(lr=0.001), since I observed oscillation in loss value after the 6th epoch. The details can be found in [./model_fitting.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/model_fitting.py)
 ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/fitting_result.png)
 ## :speech_balloon: Model evaluation
 
-After model fitting, I evaluate the model with test data, which results in **98% accuracy**.
+After model fitting, I evaluate the model with test data, which results in **98% accuracy**. The script locates in [./model_evaluation.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/model_evaluation.py)
 
 Now let’s dig deeper and see what this model is BAD at. Below is the confusion matrix and the classification report on test data.
 ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/classification_report.png)
