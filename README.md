@@ -71,3 +71,13 @@ After deciding the filter number, the architecture is pretty much done. However,
     From the result below, we see that the third case performs slightly better than the other two. Hence, until this step, we have decided on our model architecture.
     ![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/conv_BN_Dp.png)
 
+## Model Evaluation
+### Model fitting
+The following chart is the training result of our model. I used Adam as my optimizer with epsilon=1e-4(suggested by [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/Adam#args)). I also used a stepped learning rate(lr=0.0001 if epoch > 6 else 0.001) with a learning rate scheduler instead of a constant learning rate(lr=0.001), since I observed oscillation in loss value after the 6th epoch.
+![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/fitting_result.png)
+### Model evaluation
+
+After model fitting, I evaluate the model with test data, which results with 98% accuracy.
+
+Now let’s dig deeper and see what this model is BAD at. Below is the confusion matrix and the classification report on test data. We see that the model performs poorly in class 14 and class 20. Where it confuses class 14 with class 4 and class 20 with class 10.
+![image](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/result/confusion_matrix.png)
