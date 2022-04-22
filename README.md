@@ -1,4 +1,4 @@
-# Traffic Sign Classification with Tensorflow
+# Traffic Sign Classification with Tensorflow (98% accuracy)
 ## Project Scope
 1. Learn how to do a multi-class single-image classification.
 2. Trained a neural network to classify German traffic signs.
