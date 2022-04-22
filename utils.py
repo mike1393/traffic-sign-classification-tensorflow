@@ -162,7 +162,7 @@ def order_test_set(path_to_test: str, path_to_test_csv: str):
 
 def create_generators(
     batch_size: int, path_to_train: str, path_to_val: str, 
-    path_to_test: str, target_size=(40,40), class_mode: str='categorical'):
+    path_to_test: str, target_size=(50,50), class_mode: str='categorical'):
     """ Create image generator for training, validation, and testing data
 
     An ImageDataGenerator was created with a re-scaling factor of 1/255.
@@ -194,7 +194,7 @@ def create_generators(
         target_size=target_size,
         color_mode='rgb',
         class_mode=class_mode,
-        batch_size=1,
+        batch_size=batch_size,
         shuffle=False)
 
     test_generator = test_preprocessor.flow_from_directory(
