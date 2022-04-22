@@ -5,7 +5,7 @@
 3. [Evaluate](https://github.com/mike1393/traffic-sign-classification-tensorflow#speech_balloon-model-evaluation) the model.
 
 ## :open_file_folder: Dataset
-In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign)
+In this project, I am using [GTSRB - German Traffic Sign Recognition Benchmark](https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign). The script can be found in [./data_cleaning.py](https://github.com/mike1393/traffic-sign-classification-tensorflow/blob/main/data_cleaning.py)
 - About the dataset:
     - More than 40 classes
     - More than 50,000 images in total
