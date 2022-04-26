@@ -6,7 +6,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, LearningR
 import os
 #local
 from utils import create_if_not_found, create_generators, display_history
-from models import best_model
+from models import model_from_settings
 
 def step_scheduler(epoch, lr):
     if epoch > 6:
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         "double_layer": True}
 
 
-    model = best_model(settings)
+    model = model_from_settings(settings)
     opt = Adam(epsilon=1e-4)
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
     with device("/device:GPU:0"):

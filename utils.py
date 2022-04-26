@@ -1,5 +1,4 @@
 #Third Party
-from cProfile import label
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
